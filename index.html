@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Career & Mental Health Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              // Emerald & Gold Theme
+              'brand-ai-start': 'rgb(250 204 21)',    // yellow-400
+              'brand-ai-end': 'rgb(234 179 8)',      // yellow-500
+              'brand-user-start': 'rgb(6 95 70)',    // emerald-800
+              'brand-user-end': 'rgb(13 148 136)',   // teal-600
+              
+              'light-bg': 'rgb(254 252 232)',        // yellow-50
+              'dark-bg': 'rgb(2 44 34)',             // custom deep emerald
+
+              'light-card': 'rgba(255, 255, 255, 0.6)',
+              'dark-card': 'rgba(5, 46, 36, 0.5)',         // custom dark emerald with transparency
+
+              'light-text': 'rgb(17 94 89)',         // teal-800
+              'dark-text': 'rgb(254 249 195)',       // yellow-100
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.17.0",
+    "react-markdown": "https://aistudiocdn.com/react-markdown@^9.0.1",
+    "remark-gfm": "https://aistudiocdn.com/remark-gfm@^4.0.0"
+  }
+}
+</script>
+<style>
+  @keyframes slide-in-fade {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .message-animate {
+    animation: slide-in-fade 0.3s ease-out forwards;
+  }
+</style>
+</head>
+  <body class="bg-light-bg dark:bg-dark-bg bg-gradient-to-br from-yellow-50 via-amber-100 to-yellow-50 dark:from-emerald-950 dark:via-slate-900 dark:to-emerald-950">
+    <div id="root"></div>
+  </body>
+</html>

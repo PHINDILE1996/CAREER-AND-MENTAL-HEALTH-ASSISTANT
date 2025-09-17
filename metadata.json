@@ -1,0 +1,7 @@
+{
+  "name": "AI Career & Mental Health Assistant",
+  "description": "An AI-powered assistant designed to provide career guidance, job opportunity suggestions, skill-building resources, and empathetic mental health support for unemployed users.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

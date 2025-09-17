@@ -41,54 +41,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ language }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading, isTranscribing]);
-
-  const initializeChat = useCallback(async () => {
-    setIsLoading(true);
-    setMessages([]); // Clear previous messages
-    try {
-      const chatSession = createChatSession(language);
-      setChat(chatSession);
-      
-      // The AI will generate its own greeting in the correct language. We send a clear instruction to trigger it.
-      const stream = await chatSession.sendMessageStream({ message: "Introduce yourself and welcome me." });
-      
-      let fullResponse = '';
-      const aiMessageId = `ai-intro-${Date.now()}`;
-      let messageAdded = false;
-
-      for await (const chunk of stream) {
-        fullResponse += chunk.text;
-         if (!messageAdded) {
-            setMessages([{ id: aiMessageId, sender: Sender.AI, text: fullResponse }]);
-            messageAdded = true;
-          } else {
-            setMessages((prev) =>
-              prev.map((msg) => (msg.id === aiMessageId ? { ...msg, text: fullResponse } : msg))
-            );
-          }
-      }
-
-    } catch (error) {
-      console.error('Failed to initialize chat:', error);
-      const errorMessage: ChatMessage = {
-        id: `error-${Date.now()}`,
-        sender: Sender.AI,
-        text: "Sorry, I'm having trouble connecting right now. Please check your network connection and refresh the page.",
-      };
-      setMessages([errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [language]);
-
-  useEffect(() => {
-    initializeChat();
-     // Cleanup speech synthesis on component unmount
-    return () => {
-      speechSynthesis.cancel();
-    };
-  }, [initializeChat]);
-
+  
   const parseAndSetMessage = (
     fullResponse: string,
     aiMessageId: string,
@@ -116,6 +69,50 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ language }) => {
       );
     }
   };
+
+  const initializeChat = useCallback(async () => {
+    setIsLoading(true);
+    setMessages([]); // Clear previous messages
+    try {
+      const chatSession = createChatSession(language);
+      setChat(chatSession);
+      
+      // Use a standard non-streaming call for the initial message for stability.
+      const result = await chatSession.sendMessage({ message: "Introduce yourself and welcome me." });
+      const responseText = result.text;
+      
+      if (responseText) {
+        parseAndSetMessage(responseText, `ai-intro-${Date.now()}`, true);
+      } else {
+         // Fallback in case the initial response is empty
+         const welcomeMessage: ChatMessage = {
+            id: `ai-intro-${Date.now()}`,
+            sender: Sender.AI,
+            text: "Hello! How can I assist you with your career or well-being today?",
+        };
+        setMessages([welcomeMessage]);
+      }
+
+    } catch (error) {
+      console.error('Failed to initialize chat:', error);
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        sender: Sender.AI,
+        text: "Sorry, I'm having trouble connecting right now. Please ensure your API key is configured correctly and your network connection is stable, then refresh the page.",
+      };
+      setMessages([errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [language]);
+
+  useEffect(() => {
+    initializeChat();
+     // Cleanup speech synthesis on component unmount
+    return () => {
+      speechSynthesis.cancel();
+    };
+  }, [initializeChat]);
 
   const handleSendMessage = async (text: string) => {
     if (!chat || isLoading || isTranscribing) return;

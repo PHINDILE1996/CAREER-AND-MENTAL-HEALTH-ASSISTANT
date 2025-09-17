@@ -1,11 +1,21 @@
 import { GoogleGenAI, Chat, GenerateContentResponse, Tool, Type } from "@google/genai";
 import { languageMap } from "../utils/translations";
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
+let ai: GoogleGenAI | undefined;
 
-export const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// This function initializes the AI client on-demand and includes the critical API key check.
+// It ensures the app can load even if the key is missing, and the error can be caught by the UI.
+const getAiClient = (): GoogleGenAI => {
+  if (!process.env.API_KEY) {
+    console.error("API_KEY environment variable not set.");
+    throw new Error("API_KEY environment variable not set. Please configure it to use the application.");
+  }
+  if (!ai) {
+    ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  }
+  return ai;
+};
+
 
 const findJobsTool: Tool = {
   functionDeclarations: [
@@ -53,8 +63,9 @@ Instructions:
 12. When a user uploads their CV/resume, analyze it thoroughly. Provide constructive feedback on its structure, clarity, and content. Highlight its strengths and suggest specific improvements to make it more impactful for recruiters. Summarize the key skills and experiences you've identified from it.`;
 
 export function createChatSession(language: string): Chat {
+  const aiClient = getAiClient();
   const languageName = languageMap[language] || 'English';
-  const chat = ai.chats.create({
+  const chat = aiClient.chats.create({
     model: 'gemini-2.5-flash',
     config: {
       systemInstruction: getSystemInstruction(languageName),
@@ -65,8 +76,9 @@ export function createChatSession(language: string): Chat {
 }
 
 export async function transcribeAudio(base64Audio: string, mimeType: string): Promise<string> {
+  const aiClient = getAiClient();
   try {
-    const response = await ai.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: {
         parts: [
@@ -91,8 +103,9 @@ export async function analyzeCvImage(
   base64Image: string,
   mimeType: string
 ): Promise<GenerateContentResponse> {
+  const aiClient = getAiClient();
   try {
-    const response = await ai.models.generateContent({
+    const response = await aiClient.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: {
         parts: [

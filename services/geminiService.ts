@@ -1,5 +1,3 @@
-
-// Fix: Import 'Type' enum from @google/genai.
 import { GoogleGenAI, Chat, GenerateContentResponse, Tool, Type } from "@google/genai";
 import { languageMap } from "../utils/translations";
 
@@ -15,21 +13,17 @@ const findJobsTool: Tool = {
       name: 'findJobs',
       description: 'Searches for job listings based on a query, location, and job type.',
       parameters: {
-// Fix: Use Type.OBJECT instead of the string "OBJECT".
         type: Type.OBJECT,
         properties: {
           query: {
-// Fix: Use Type.STRING instead of the string "STRING".
             type: Type.STRING,
             description: 'The job title, skill, or keyword to search for. E.g., "React developer", "project manager".',
           },
           location: {
-// Fix: Use Type.STRING instead of the string "STRING".
             type: Type.STRING,
             description: 'The city or region to search for jobs in. E.g., "Cape Town", "Johannesburg".',
           },
           job_type: {
-// Fix: Use Type.STRING instead of the string "STRING".
             type: Type.STRING,
             description: 'The type of employment. E.g., "full-time", "part-time", "contract".',
           },
@@ -62,7 +56,6 @@ export function createChatSession(language: string): Chat {
   const languageName = languageMap[language] || 'English';
   const chat = ai.chats.create({
     model: 'gemini-2.5-flash',
-// Fix: The 'tools' property should be inside the 'config' object.
     config: {
       systemInstruction: getSystemInstruction(languageName),
       tools: [findJobsTool],

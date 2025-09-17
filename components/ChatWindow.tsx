@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Chat } from '@google/genai';
 import {
@@ -160,7 +159,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ language }) => {
             args.job_type as string
           );
 
-// Fix: Changed property 'parts' to 'message' to match the SendMessageParameters type for sending a function response.
           modelResponse = await chat.sendMessage({
             message: [
               {

@@ -49,8 +49,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ language }) => {
       const chatSession = createChatSession(language);
       setChat(chatSession);
       
-      // The AI will generate its own greeting in the correct language, so we send an empty message to trigger it.
-      const stream = await chatSession.sendMessageStream({ message: "Hello" });
+      // The AI will generate its own greeting in the correct language. We send a clear instruction to trigger it.
+      const stream = await chatSession.sendMessageStream({ message: "Introduce yourself and welcome me." });
       
       let fullResponse = '';
       const aiMessageId = `ai-intro-${Date.now()}`;
@@ -165,8 +165,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ language }) => {
                 functionResponse: {
                   name: 'findJobs',
                   response: {
-                    name: 'findJobs',
-                    content: { jobs: jobResults },
+                    jobs: jobResults,
                   },
                 },
               },
